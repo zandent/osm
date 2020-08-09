@@ -70,8 +70,8 @@ contract OSM is LibNote {
     }
 
     address public src;
-    uint16  constant ONE_HOUR = uint16(200);
-    uint16  constant ONE_HOUR_FOR_EMITSIG_DELAY= 200;
+    uint16  constant ONE_HOUR = uint16(100);
+    uint16  constant ONE_HOUR_FOR_EMITSIG_DELAY= 100;
     uint16  public hop = ONE_HOUR;
     uint64  public zzz;
 
@@ -127,14 +127,10 @@ contract OSM is LibNote {
     signal PriceFeedUpdate(bytes32 price);
 
     handler SendUpdate(bytes32 unused) public {
-        //require(pass(), "OSM/not-passed");
-        //(bytes32 wut, bool ok) = DSValue(src).peek();
-        bytes32 wut = bytes32(uint(unused) + 1);
-        bool ok = true;
+        (bytes32 wut, bool ok) = DSValue(src).peek();
         if (ok) {
             cur = nxt;
             nxt = Feed(uint128(uint(wut)), 1);
-            zzz = prev(era());
             emit LogValue(bytes32(uint(cur.val)));
             bytes32 price = bytes32(uint(cur.val));
             emitsig PriceFeedUpdate(price).delay(ONE_HOUR_FOR_EMITSIG_DELAY);
@@ -197,8 +193,3 @@ contract OSM is LibNote {
 
 }
 
-// ../../solidity/signalslot/parse.pl src/osm_sig.sol src/osm_sig_parsed.sol
-// make build
-// cp out/OSM.abi ../conflux-singal-handler-case-study/makerdao/js_osm/contract/OSM-abi.json
-// cp out/OSM.bin ../conflux-singal-handler-case-study/makerdao/js_osm/contract/OSM-bytecode.json
-// cp src/osm_sig_parsed.sol ../conflux-singal-handler-case-study/makerdao/js_osm/contract/osm_sig_parsed.sol
