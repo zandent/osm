@@ -70,8 +70,8 @@ contract OSM is LibNote {
     }
 
     address public src;
-    uint16  constant ONE_HOUR = uint16(3600);
-    uint16  constant ONE_HOUR_FOR_EMITSIG_DELAY= 3600;
+    uint16  constant ONE_HOUR = uint16(100);
+    uint16  constant ONE_HOUR_FOR_EMITSIG_DELAY= 100;
     uint16  public hop = ONE_HOUR;
     uint64  public zzz;
 
@@ -126,16 +126,18 @@ contract OSM is LibNote {
     
     signal PriceFeedUpdate(bytes32 price);
 
-    handler SendUpdate(bytes32 unused) external note stoppable {
-        require(pass(), "OSM/not-passed");
-        (bytes32 wut, bool ok) = DSValue(src).peek();
+    handler SendUpdate(bytes32 unused) public {
+        //require(pass(), "OSM/not-passed");
+        //(bytes32 wut, bool ok) = DSValue(src).peek();
+        bytes32 wut = bytes32(uint(unused) + 1);
+        bool ok = true;
         if (ok) {
             cur = nxt;
             nxt = Feed(uint128(uint(wut)), 1);
             zzz = prev(era());
             emit LogValue(bytes32(uint(cur.val)));
-            bytes32 price = bytes32(uint(cur.val));
-            emitsig PriceFeedUpdate(price).delay(ONE_HOUR_FOR_EMITSIG_DELAY);
+            bytes32 price = wut;
+            emitsig PriceFeedUpdate(price).delay(200);
         }
     }
 
@@ -175,6 +177,15 @@ contract OSM is LibNote {
             bud[a[i]] = 0;
         }
     }
+
+    function startPriceUpdate() public{
+        emitsig PriceFeedUpdate(0).delay(0);
+    }
+
+    function getCurrentPrice() public returns (bytes32){
+        return bytes32(uint(cur.val));
+    }
+
     // Constructor
     constructor(address src_) public {
         wards[msg.sender] = 1;
@@ -182,7 +193,6 @@ contract OSM is LibNote {
         // Bind SendUpdate slot to the signal PriceFeedUpdate. This way the price feed is automatically
         // updated every single hour. Feed is also then relayed to other receivers.
         SendUpdate.bind(PriceFeedUpdate);
-        emitsig PriceFeedUpdate(0).delay(0);
     }
 
 }
