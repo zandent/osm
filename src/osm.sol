@@ -19,7 +19,7 @@ pragma solidity >=0.5.10;
 
 import "ds-value/value.sol";
 
-contract LibNote {
+contract LibNote_ORI {
     event LogNote(
         bytes4   indexed  sig,
         address  indexed  usr,
@@ -48,7 +48,7 @@ contract LibNote {
     }
 }
 
-contract OSM is LibNote {
+contract OSM_ORI is LibNote_ORI {
 
     // --- Auth ---
     mapping (address => uint) public wards;
@@ -139,15 +139,15 @@ contract OSM is LibNote {
         }
     }
 
-    function peek() external view toll returns (bytes32,bool) {
+    function peek() external returns (bytes32,bool) {
         return (bytes32(uint(cur.val)), cur.has == 1);
     }
 
-    function peep() external view toll returns (bytes32,bool) {
+    function peep() external returns (bytes32,bool) {
         return (bytes32(uint(nxt.val)), nxt.has == 1);
     }
 
-    function read() external view toll returns (bytes32) {
+    function read() external returns (bytes32) {
         require(cur.has == 1, "OSM/no-current-value");
         return (bytes32(uint(cur.val)));
     }

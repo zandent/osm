@@ -10,8 +10,8 @@ clean:
 
 build: clean
 	mkdir -p out/
-	echo solc --overwrite -o out ${remappings} ${opts} /=/ src/osm_sig_parsed.sol
-	solc --overwrite -o out ${remappings} ${opts} /=/ src/osm_sig_parsed.sol
+	echo solc --overwrite -o out ${remappings} ${opts} /=/ src/osm_sig_parsed.sol src/osm.sol
+	solc --overwrite -o out ${remappings} ${opts} /=/ src/osm_sig_parsed.sol src/osm.sol
 	
 
 test: build
