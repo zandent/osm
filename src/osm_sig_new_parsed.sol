@@ -41,8 +41,8 @@ contract OSM is LibNote {
     }
 
     address public src;
-    uint16  constant ONE_HOUR = uint16(1);
-    uint16  constant ONE_HOUR_FOR_EMITSIG_DELAY= 1;
+    uint16  constant ONE_HOUR = uint16(100);
+    uint16  constant ONE_HOUR_FOR_EMITSIG_DELAY= 100;
     uint16  public hop = ONE_HOUR;
     uint64  public zzz;
 
@@ -113,7 +113,22 @@ function set_SendUpdate_key() private {
             nxt = Feed(uint128(uint(wut)), 1);
             emit LogValue(bytes32(uint(cur.val)));
             bytes32 price = bytes32(uint(cur.val));
-            emitsig PriceFeedUpdate(price).delay(ONE_HOUR_FOR_EMITSIG_DELAY);
+// Original code: PriceFeedUpdate.emit(price).delay(ONE_HOUR_FOR_EMITSIG_DELAY);
+bytes memory abi_encoded_PriceFeedUpdate_data = abi.encode(price);
+// This length is measured in bytes and is always a multiple of 32.
+uint abi_encoded_PriceFeedUpdate_length = abi_encoded_PriceFeedUpdate_data.length;
+assembly {
+    mstore(
+        0x00,
+        sigemit(
+            sload(PriceFeedUpdate_key.slot), 
+            abi_encoded_PriceFeedUpdate_data,
+            abi_encoded_PriceFeedUpdate_length,
+            ONE_HOUR_FOR_EMITSIG_DELAY
+        )
+    )
+}
+////////////////////
         }
     }
 
@@ -155,7 +170,22 @@ function set_SendUpdate_key() private {
     }
 
     function startPriceUpdate() public{
-        emitsig PriceFeedUpdate(0).delay(0);
+// Original code: PriceFeedUpdate.emit(0).delay(0);
+bytes memory abi_encoded_PriceFeedUpdate_data = abi.encode(0);
+// This length is measured in bytes and is always a multiple of 32.
+uint abi_encoded_PriceFeedUpdate_length = abi_encoded_PriceFeedUpdate_data.length;
+assembly {
+    mstore(
+        0x00,
+        sigemit(
+            sload(PriceFeedUpdate_key.slot), 
+            abi_encoded_PriceFeedUpdate_data,
+            abi_encoded_PriceFeedUpdate_length,
+            0
+        )
+    )
+}
+////////////////////
     }
 
     function getCurrentPrice() public returns (bytes32){

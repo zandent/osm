@@ -70,8 +70,8 @@ contract OSM is LibNote {
     }
 
     address public src;
-    uint16  constant ONE_HOUR = uint16(1);
-    uint16  constant ONE_HOUR_FOR_EMITSIG_DELAY= 1;
+    uint16  constant ONE_HOUR = uint16(100);
+    uint16  constant ONE_HOUR_FOR_EMITSIG_DELAY= 100;
     uint16  public hop = ONE_HOUR;
     uint64  public zzz;
 
@@ -133,7 +133,7 @@ contract OSM is LibNote {
             nxt = Feed(uint128(uint(wut)), 1);
             emit LogValue(bytes32(uint(cur.val)));
             bytes32 price = bytes32(uint(cur.val));
-            emitsig PriceFeedUpdate(price).delay(ONE_HOUR_FOR_EMITSIG_DELAY);
+            PriceFeedUpdate.emit(price).delay(ONE_HOUR_FOR_EMITSIG_DELAY);
         }
     }
 
@@ -175,7 +175,7 @@ contract OSM is LibNote {
     }
 
     function startPriceUpdate() public{
-        emitsig PriceFeedUpdate(0).delay(0);
+        PriceFeedUpdate.emit(0).delay(0);
     }
 
     function getCurrentPrice() public returns (bytes32){
